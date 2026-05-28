@@ -1,0 +1,22 @@
+type: custom:mushroom-template-card
+primary: Fenster & Türen
+secondary: "{{ states('input_text.fenster_offen_anzahl') }}"
+icon: >
+  {% if states('input_boolean.warnung_schalter_kritisch_fenster_turen_offen') == 'on' %} mdi:shield-alert
+  {% elif states('input_boolean.warnung_schalter_gesamt_fenster_turen_offen') == 'on' %} mdi:window-open
+  {% else %} mdi:shield-check {% endif %}
+icon_color: >
+  {% if states('input_boolean.warnung_schalter_kritisch_fenster_turen_offen') == 'on' %} red
+  {% elif states('input_boolean.warnung_schalter_gesamt_fenster_turen_offen') == 'on' %} orange
+  {% else %} green {% endif %}
+tap_action:
+  action: more-info
+  entity: input_text.fenster_offen_anzahl
+card_mod:
+  style: |
+    ha-card {
+      background: rgba(20, 20, 20, 0.4) !important;
+      backdrop-filter: blur(12px) !important;
+      border: 1px solid rgba(255, 255, 255, 0.1) !important;
+      box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1) !important;
+    }
