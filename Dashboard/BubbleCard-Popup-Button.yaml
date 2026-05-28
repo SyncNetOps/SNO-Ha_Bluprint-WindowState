@@ -1,0 +1,21 @@
+type: custom:bubble-card
+card_type: button
+button_type: state
+entity: input_text.fenster_offen_anzahl
+name: Fenster & Türen
+icon: mdi:window-open
+tap_action:
+  action: navigate
+  navigation_path: "#fenster-details"
+sub_button:
+  main: []
+  bottom: []
+double_tap_action:
+  action: navigate
+  navigation_path: "#fenster-details"
+hold_action:
+  action: more-info
+button_action:
+  tap_action:
+    action: navigate
+    navigation_path: "#fenster-details"
