@@ -1,0 +1,431 @@
+blueprint:
+  name: "SNO WindowState"
+  description: |
+    **Version: 0.1.0**
+
+    Diese smarte Schaltzentrale überwacht all deine Fenster und Türen. 
+    Sie fasst die Zustände für dein Dashboard zusammen, steuert Sperrsignale für andere Automatisierungen 
+    und warnt dich proaktiv, wenn es regnet und (Dach-)Fenster noch geöffnet sind.
+
+    ---
+
+    ### ⚙️ Übersicht der Konfiguration:
+    * **🪟/🪜/🚪 Basis-Entitäten:** Wähle deine Fenster, Dachfenster und Türen aus.
+    * **⚠️ Kritisch:** Markiere bestimmte Zugänge (z. B. Haustür, EG-Fenster) als sicherheitsrelevant.
+    * **🌧️ Wetter & Aktionen:** Wähle einen Regensensor, bis zu drei Smartphones und erweitere die Warnung um komplexe Aktionen (z.B. für NS Panel oder smarte Lampen).
+    * **💾 Text-Ausgabe:** Bestimme Text-Helfer (`input_text`), um die Namen offener Fenster formatiert für dein Dashboard bereitzustellen. *(Tipp: Erhöhe das Limit in HA auf 255 Zeichen!)*
+    * **🛑/🔢 Erweiterte Helfer:** Hinterlege optionale Schalter (`input_boolean`) als Sperrsignal oder Zähler (`input_number`).
+
+    ---
+
+    🔗 **[Hilfe & FAQ](https://sno.mb222.de/es-faq/)** | 🐛 **[Fehler auf GitHub melden (Issues)](https://github.com/SyncNetOps/SNO-Ha_Bluprint-WindowState)**
+  domain: automation
+  
+  input:
+    # --- FENSTER ---
+    section_windows:
+      name: "🪟 Standard-Fenster"
+      icon: mdi:window-closed-variant
+      input:
+        standard_windows:
+          name: Fenster
+          description: Wähle alle normalen Fenster aus.
+          default: []
+          selector:
+            entity:
+              multiple: true
+              domain: binary_sensor
+              device_class: window
+
+    # --- DACHFENSTER ---
+    section_roof:
+      name: "🪜 Dachfenster"
+      icon: mdi:window-open
+      input:
+        roof_windows:
+          name: Dachfenster
+          description: Wähle alle Dachfenster aus (Besonders wichtig für die Regenwarnung!).
+          default: []
+          selector:
+            entity:
+              multiple: true
+              domain: binary_sensor
+              device_class: window
+
+    # --- TÜREN ---
+    section_doors:
+      name: "🚪 Türen"
+      icon: mdi:door
+      input:
+        doors:
+          name: Türen
+          description: Wähle alle Türen (Haus-, Terrassen- oder Balkontüren) aus.
+          default: []
+          selector:
+            entity:
+              multiple: true
+              domain: binary_sensor
+              device_class: door
+
+    # --- KRITISCH ---
+    section_critical:
+      name: "⚠️ Kritische Überwachung"
+      icon: mdi:alert-outline
+      input:
+        critical_entities:
+          name: Kritische Zugänge
+          description: Wähle Entitäten (z. B. Haustür, Erdgeschoss-Fenster), die als sicherheitskritisch markiert werden sollen.
+          default: []
+          selector:
+            entity:
+              multiple: true
+              domain: binary_sensor
+
+    # --- WETTER & BENACHRICHTIGUNGEN ---
+    section_weather:
+      name: "🌧️ Wetter & Aktionen bei Regen"
+      icon: mdi:weather-pouring
+      input:
+        rain_sensor:
+          name: Regensensor / Wetterdienst
+          description: Sensor, der Regen meldet (z.B. Wetter-Entität oder Feuchtigkeitssensor).
+          default: ""
+          selector:
+            entity:
+              domain:
+                - weather
+                - binary_sensor
+        notify_device_1:
+          name: 📱 Smartphone 1 (Optional)
+          description: Haupt-Gerät für die Push-Warnung.
+          default: ""
+          selector:
+            device:
+              integration: mobile_app
+        notify_device_2:
+          name: 📱 Smartphone 2 (Optional)
+          description: Weiteres Gerät für die Push-Warnung.
+          default: ""
+          selector:
+            device:
+              integration: mobile_app
+        notify_device_3:
+          name: 📱 Smartphone 3 (Optional)
+          description: Weiteres Gerät für die Push-Warnung.
+          default: ""
+          selector:
+            device:
+              integration: mobile_app
+        custom_action_1:
+          name: ⚙️ Komplexe Aktion 1 (Optional)
+          description: "Erlaube zusätzliche Aktionen (z. B. NS Panel Warnung, Sprachansage, Lichter blinken lassen)."
+          default: []
+          selector:
+            action: {}
+        custom_action_2:
+          name: ⚙️ Komplexe Aktion 2 (Optional)
+          description: "Weitere zusätzliche Aktion bei Regen."
+          default: []
+          selector:
+            action: {}
+
+    # --- TEXT-AUSGABE (FÜR DASHBOARD) ---
+    section_dashboard:
+      name: "💾 Text-Ausgabe (für Dashboard)"
+      icon: mdi:monitor-dashboard
+      input:
+        target_summary:
+          name: "1️⃣ Haupt-Status (Zahlen) (Optional)"
+          description: Zeigt die Zusammenfassung (z.B. "5 geöffnet, davon 1 kritisch").
+          default: ""
+          selector:
+            entity:
+              domain: input_text
+        target_details_crit:
+          name: "2️⃣ Details: Kritisch (Optional)"
+          description: Listet nur die Namen der kritischen Zugänge.
+          default: ""
+          selector:
+            entity:
+              domain: input_text
+        target_details_win:
+          name: "3️⃣ Details: Fenster & Dach (Optional)"
+          description: Listet nur die Namen aller Fenster.
+          default: ""
+          selector:
+            entity:
+              domain: input_text
+        target_details_doors:
+          name: "4️⃣ Details: Türen (Optional)"
+          description: Listet nur die Namen aller Türen.
+          default: ""
+          selector:
+            entity:
+              domain: input_text
+
+    # --- ZUSATZ-HELFER (BLOCKER & ZÄHLER) ---
+    section_advanced_helpers:
+      name: "⚙️ Erweiterte Helfer (Blocker & Zähler)"
+      icon: mdi:cog-transfer
+      collapsed: true
+      input:
+        target_blocker_crit:
+          name: "🛑 Blocker: Kritisch (Optional)"
+          description: "Dieser Schalter (input_boolean) wird automatisch auf 'AN' gesetzt, sobald mindestens 1 kritisches Fenster offen ist."
+          default: ""
+          selector:
+            entity:
+              domain: input_boolean
+        target_blocker_all:
+          name: "🛑 Blocker: Gesamt (Optional)"
+          description: "Dieser Schalter (input_boolean) wird automatisch auf 'AN' gesetzt, sobald IRGENDEIN Fenster oder eine Tür offen ist."
+          default: ""
+          selector:
+            entity:
+              domain: input_boolean
+        target_count_crit:
+          name: "🔢 Zähler: Kritisch (Optional)"
+          description: "Zahlen-Helfer (input_number), in den die reine Anzahl der offenen kritischen Zugänge geschrieben wird."
+          default: ""
+          selector:
+            entity:
+              domain: input_number
+        target_count_all:
+          name: "🔢 Zähler: Gesamt (Optional)"
+          description: "Zahlen-Helfer (input_number), in den die reine Gesamtzahl aller offenen Zugänge geschrieben wird."
+          default: ""
+          selector:
+            entity:
+              domain: input_number
+
+variables:
+  standard_windows: !input standard_windows
+  roof_windows: !input roof_windows
+  doors: !input doors
+  critical_entities: !input critical_entities
+  rain_sensor: !input rain_sensor
+  
+  target_summary: !input target_summary
+  target_details_crit: !input target_details_crit
+  target_details_win: !input target_details_win
+  target_details_doors: !input target_details_doors
+  
+  target_blocker_crit: !input target_blocker_crit
+  target_blocker_all: !input target_blocker_all
+  target_count_crit: !input target_count_crit
+  target_count_all: !input target_count_all
+
+mode: queued
+max: 5
+
+trigger:
+  - platform: state
+    entity_id: !input standard_windows
+  - platform: state
+    entity_id: !input roof_windows
+  - platform: state
+    entity_id: !input doors
+  - platform: state
+    entity_id: !input critical_entities
+  - platform: state
+    entity_id: !input rain_sensor
+
+action:
+  # --- DATEN ERFASSEN ---
+  - variables:
+      crit_list: >
+        {{ expand(critical_entities) | selectattr('state', 'eq', 'on') | map(attribute='name') | list }}
+      win_list: >
+        {{ expand(standard_windows) | selectattr('state', 'eq', 'on') | map(attribute='name') | list }}
+      roof_list: >
+        {{ expand(roof_windows) | selectattr('state', 'eq', 'on') | map(attribute='name') | list }}
+      door_list: >
+        {{ expand(doors) | selectattr('state', 'eq', 'on') | map(attribute='name') | list }}
+      
+      all_entities: "{{ standard_windows + roof_windows + doors + critical_entities }}"
+      total_open: >
+        {{ expand(all_entities) | selectattr('state', 'eq', 'on') | map(attribute='entity_id') | unique | list | length }}
+      total_crit: "{{ crit_list | length }}"
+
+  # --- 1. HAUPT-STATUS (ZAHLEN) UPDATEN ---
+  - if:
+      - condition: template
+        value_template: "{{ target_summary != '' }}"
+    then:
+      - service: input_text.set_value
+        target:
+          entity_id: "{{ target_summary }}"
+        data:
+          value: >
+            {% if total_open == 0 %}
+              🟢 Alles geschlossen und sicher.
+            {% else %}
+              {{ total_open }} geöffnet, davon {{ total_crit }} kritisch
+            {% endif %}
+
+  # --- 2. DETAILS KRITISCH UPDATEN ---
+  - if:
+      - condition: template
+        value_template: "{{ target_details_crit != '' }}"
+    then:
+      - service: input_text.set_value
+        target:
+          entity_id: "{{ target_details_crit }}"
+        data:
+          value: >
+            {% if crit_list | length > 0 %}
+              ⚠️ Kritisch: {{ crit_list | join(', ') | truncate(240, True, '...') }}
+            {% else %}
+              🛡️ Keine kritischen Zugänge offen.
+            {% endif %}
+
+  # --- 3. DETAILS FENSTER UPDATEN ---
+  - if:
+      - condition: template
+        value_template: "{{ target_details_win != '' }}"
+    then:
+      - service: input_text.set_value
+        target:
+          entity_id: "{{ target_details_win }}"
+        data:
+          value: >
+            {% set combined = win_list + roof_list %}
+            {% if combined | length > 0 %}
+              🪟/🪜 Fenster: {{ combined | join(', ') | truncate(240, True, '...') }}
+            {% else %}
+              ➖ Keine Fenster offen.
+            {% endif %}
+
+  # --- 4. DETAILS TÜREN UPDATEN ---
+  - if:
+      - condition: template
+        value_template: "{{ target_details_doors != '' }}"
+    then:
+      - service: input_text.set_value
+        target:
+          entity_id: "{{ target_details_doors }}"
+        data:
+          value: >
+            {% if door_list | length > 0 %}
+              🚪 Türen: {{ door_list | join(', ') | truncate(240, True, '...') }}
+            {% else %}
+              ➖ Keine Türen offen.
+            {% endif %}
+
+  # --- 5. ERWEITERTE HELFER (BLOCKER & ZÄHLER) UPDATEN ---
+  
+  # Blocker: Kritisch
+  - if:
+      - condition: template
+        value_template: "{{ target_blocker_crit != '' }}"
+    then:
+      - if:
+          - condition: template
+            value_template: "{{ total_crit > 0 }}"
+        then:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: "{{ target_blocker_crit }}"
+        else:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: "{{ target_blocker_crit }}"
+
+  # Blocker: Gesamt
+  - if:
+      - condition: template
+        value_template: "{{ target_blocker_all != '' }}"
+    then:
+      - if:
+          - condition: template
+            value_template: "{{ total_open > 0 }}"
+        then:
+          - service: input_boolean.turn_on
+            target:
+              entity_id: "{{ target_blocker_all }}"
+        else:
+          - service: input_boolean.turn_off
+            target:
+              entity_id: "{{ target_blocker_all }}"
+
+  # Zähler: Kritisch
+  - if:
+      - condition: template
+        value_template: "{{ target_count_crit != '' }}"
+    then:
+      - service: input_number.set_value
+        target:
+          entity_id: "{{ target_count_crit }}"
+        data:
+          value: "{{ total_crit | float }}"
+
+  # Zähler: Gesamt
+  - if:
+      - condition: template
+        value_template: "{{ target_count_all != '' }}"
+    then:
+      - service: input_number.set_value
+        target:
+          entity_id: "{{ target_count_all }}"
+        data:
+          value: "{{ total_open | float }}"
+
+  # --- 6. REGEN-WARNUNG & AKTIONEN ---
+  - if:
+      - condition: template
+        value_template: "{{ rain_sensor != '' }}"
+      - condition: template
+        value_template: >
+          {% set state = states(rain_sensor) %}
+          {{ state in ['on', 'rain', 'pouring', 'lightning-rainy'] }}
+      - condition: template
+        value_template: >
+          {% set open_roof = expand(roof_windows) | selectattr('state', 'eq', 'on') | list | length %}
+          {{ open_roof > 0 }}
+    then:
+      # Push Benachrichtigung 1
+      - if:
+          - condition: template
+            value_template: "{{ notify_device_1 != '' }}"
+        then:
+          - domain: mobile_app
+            type: notify
+            device_id: !input notify_device_1
+            title: "🌧️ Es regnet!"
+            message: "Achtung! Es hat angefangen zu regnen und es sind noch Dachfenster geöffnet. Bitte sofort schließen!"
+      
+      # Push Benachrichtigung 2
+      - if:
+          - condition: template
+            value_template: "{{ notify_device_2 != '' }}"
+        then:
+          - domain: mobile_app
+            type: notify
+            device_id: !input notify_device_2
+            title: "🌧️ Es regnet!"
+            message: "Achtung! Es hat angefangen zu regnen und es sind noch Dachfenster geöffnet. Bitte sofort schließen!"
+
+      # Push Benachrichtigung 3
+      - if:
+          - condition: template
+            value_template: "{{ notify_device_3 != '' }}"
+        then:
+          - domain: mobile_app
+            type: notify
+            device_id: !input notify_device_3
+            title: "🌧️ Es regnet!"
+            message: "Achtung! Es hat angefangen zu regnen und es sind noch Dachfenster geöffnet. Bitte sofort schließen!"
+
+      # Komplexe Aktion 1 (Kugelsicher)
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ true }}"
+            sequence: !input custom_action_1
+
+      # Komplexe Aktion 2 (Kugelsicher)
+      - choose:
+          - conditions:
+              - condition: template
+                value_template: "{{ true }}"
+            sequence: !input custom_action_2
