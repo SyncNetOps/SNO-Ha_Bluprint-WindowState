@@ -1,5 +1,7 @@
 # 🪟 SNO WindowState - Blueprint für Home Assistant
 
+[![Home Assistant Blueprint](https://img.shields.io/badge/Home%20Assistant-Blueprint-blue.svg)](https://www.home-assistant.io/docs/automation/using_blueprints/)
+[![Version](https://img.shields.io/badge/Version-0.1.0-brightgreen.svg)](#changelog)
 [![Open your Home Assistant instance and show the blueprint import dialog with a specific blueprint pre-filled.](https://my.home-assistant.io/badges/blueprint_import.svg)](https://my.home-assistant.io/redirect/blueprint_import/?blueprint_url=https%3A%2F%2Fgithub.com%2FSyncNetOps%2FSNO-Ha_Bluprint-WindowState%2Fblob%2Fmain%2FSyncNetOps%252FSNO_WindowState.yaml)
 
 **SNO WindowState** ist eine hochprofessionelle, fehlertolerante Schaltzentrale für dein Smart Home. Sie überwacht alle Fenster, Dachfenster und Türen, generiert formatierten Text für dein Dashboard und warnt dich proaktiv vor Regen bei offenen Fenstern.
@@ -12,12 +14,13 @@
 
 ## 🎨 Dashboard Karten (Dark/Glass Design)
 Wir haben perfekt abgestimmte, moderne Dashboard-Karten für dieses Blueprint entwickelt. Die entsprechenden YAML-Codes findest du direkt hier im Repository:
-* 🫧 **[Bubble Card (Pop-up & Button)](https://github.com/SyncNetOps/SNO-Ha_Bluprint-WindowState/tree/main/Dashboard)**
-* 🍄 **[Mushroom Card](https://github.com/SyncNetOps/SNO-Ha_Bluprint-WindowState/blob/main/Dashboard/Mushroom%20Card.yaml)**
+* 🔘 **[Bubble Card (Trigger-Button)](https://github.com/SyncNetOps/SNO-Ha_Bluprint-WindowState/blob/main/Dashboard%2FBubbleCard-Popup-Button.yaml)**
+* 🫧 **[Bubble Card (Verstecktes Pop-up)](https://github.com/SyncNetOps/SNO-Ha_Bluprint-WindowState/blob/main/Dashboard%2FBubbleCard-Popup.yaml)**
+* 🍄 **[Mushroom Card](https://github.com/SyncNetOps/SNO-Ha_Bluprint-WindowState/blob/main/Dashboard%2FMushroom%20Card.yaml)**
 
 ## 📚 Dokumentation & Hilfe
-Für tiefgreifende Informationen, eine detaillierte Schritt-für-Schritt-Anleitung und alle FAQs besuche bitte zwingend unsere Webseite:
+Für tiefergehende Informationen, Installationshilfen und alle FAQs besuche bitte zwingend unsere offizielle Webseite:
 **👉 [SNO Webseite: Hilfe, FAQ & Dokumentation](https://sno.mb222.de/es-faq/)**
 
 ---
-*Gefundene Fehler oder Feature-Wünsche? Melde sie gerne in unseren [GitHub Issues](https://github.com/SyncNetOps/SNO-Ha_Bluprint-WindowState/issues).*
+*Gefundene Fehler oder Feature-Wünsche? Melde sie gerne in unseren [GitHub Issues](https://github.com/SyncNetOps/SNO-Ha_Bluprint-WindowState).*
